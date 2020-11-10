@@ -79,7 +79,7 @@ class _SendTabState extends State<SendTab> {
           title: Text("Send An Image"),
         ),
         body: Center(
-            child: Column(children: [
+            child: ListView(children: [
                 Hero(
                 tag: "post",
                 child: ElevatedButton(
@@ -89,12 +89,8 @@ class _SendTabState extends State<SendTab> {
             Form(
                 key: _formKey,
                 child: TextFormField(
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return 'Please enter some text';
-                    } //TODO check is valid ipv4
-                    return null;
-                  },
+                  keyboardType: TextInputType.number,
+                  validator: ipValidate,
                   onSaved: (text) {
                     friend_selection = text;
                   },
@@ -113,5 +109,25 @@ class _SendTabState extends State<SendTab> {
     )
     )
     );
+  }
+
+  String ipValidate(String value) {
+    if (value.isEmpty) {
+      return 'Please enter an IP address';
+    }
+    else {
+      List<String> splitList = value.split('.');
+      if (splitList.length != 4) return "Invalid IP Address";
+      for (String substring in splitList) {
+        if (!isNumeric(substring)) return "Invalid IP Address";
+        int num = int.parse(substring);
+        if (num < 0 || num > 255) return "Invalid IP Address";
+      }
+    }
+    return null;
+  }
+
+  bool isNumeric(String str) {
+    return double.tryParse(str) != null;
   }
 }
