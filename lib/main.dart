@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import './friends.dart';
 import './feed.dart';
-import './send.dart';
 
 void main() {
   runApp(MyApp());

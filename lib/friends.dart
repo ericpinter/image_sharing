@@ -11,7 +11,7 @@ class FriendsTab extends StatefulWidget {
 class _FriendsTabState extends State<FriendsTab> {
   TextEditingController ipController;
   TextEditingController nameController;
-  List<Friend> friends = new List<Friend>();
+  Friends friends = Friends();
 
   void initState() {
     super.initState();
@@ -30,7 +30,8 @@ class _FriendsTabState extends State<FriendsTab> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(padding: const EdgeInsets.all(8), children: _renderFriends());
+    return ListView(
+        padding: const EdgeInsets.all(8), children: _renderFriends());
   }
 
   //Widget submitButton = FlatButton(child: Text("Add"), onPressed: () {});
@@ -39,13 +40,12 @@ class _FriendsTabState extends State<FriendsTab> {
 
   List<Widget> _renderFriends() {
     List<Widget> friendBlocks = new List<Widget>();
-    friendBlocks.add(RaisedButton(onPressed: _addFriendPrompt, child: Text("Add Friend")));
+    friendBlocks.add(
+        RaisedButton(onPressed: _addFriendPrompt, child: Text("Add Friend")));
     for (Friend f in friends) {
       Container friendBlock = new Container(
         height: 50,
-        child: Center (
-          child: Text (f.name)
-        ),
+        child: Center(child: Text(f.name)),
       );
 
       friendBlocks.add(friendBlock);
@@ -62,15 +62,15 @@ class _FriendsTabState extends State<FriendsTab> {
           content: new Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-                Form(
-                  key: _formKey,
-                  child: Column (
-                    children: [
-                      _ipField(),
-                      _nameField(),
-                    ],
-                  ),
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    _ipField(),
+                    _nameField(),
+                  ],
                 ),
+              ),
             ],
           ),
           actions: <Widget>[
@@ -80,7 +80,7 @@ class _FriendsTabState extends State<FriendsTab> {
                   if (_formKey.currentState.validate()) {
                     setState(() {
                       _addFriend(ipController.text, nameController.text);
-                    }) ;
+                    });
                     Navigator.pop(context);
                   }
                 }),
@@ -95,9 +95,7 @@ class _FriendsTabState extends State<FriendsTab> {
       controller: ipController,
       keyboardType: TextInputType.number,
       validator: _ipValidate,
-      decoration: InputDecoration(
-          labelText: "IP Address"
-      ),
+      decoration: InputDecoration(labelText: "IP Address"),
     );
   }
 
@@ -105,22 +103,18 @@ class _FriendsTabState extends State<FriendsTab> {
     return TextFormField(
       controller: nameController,
       keyboardType: TextInputType.name,
-      decoration: InputDecoration(
-          labelText: "Name"
-      ),
+      decoration: InputDecoration(labelText: "Name"),
     );
   }
 
   void _addFriend(String ipAddr, String name) {
-    Friend f = new Friend(name, ipAddr);
-    friends.add(f);
+    friends.add(new Friend(ipAddr, name: name));
   }
 
   String _ipValidate(String value) {
     if (value.isEmpty) {
       return 'Please enter an IP address';
-    }
-    else {
+    } else {
       List<String> splitList = value.split('.');
       if (splitList.length != 4) return "Invalid IP Address";
       for (String substring in splitList) {

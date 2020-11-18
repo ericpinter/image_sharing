@@ -46,7 +46,7 @@ class _FeedTabState extends State<FeedTab> {
             child: ElevatedButton(
                 onPressed: () async {
                   await Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => SendTab(log)));
+                      MaterialPageRoute(builder: (context) => SendTab(log)));
                   reload();
                 },
                 child: Text("Make a post"))),

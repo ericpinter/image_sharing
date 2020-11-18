@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_sharing/network.dart';
 
 import './network.dart';
+import 'friends_model.dart';
 
 class SendTab extends StatefulWidget {
   NetworkLog log;
@@ -100,7 +101,7 @@ class _SendTabState extends State<SendTab> {
                   if (_formKey.currentState.validate()) {
                     print(_image.path);
                     _formKey.currentState.save();
-                    await log.sendTo(friend_selection, _image);
+                    await log.sendImage(Friend(friend_selection), _image);
                     Navigator.pop(context);
                   }
                 },
