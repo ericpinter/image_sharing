@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:image_sharing/friends_model.dart';
-import 'package:image_sharing/image_transaction.dart';
+import 'image_transaction.dart';
+import 'friends_model.dart';
 import 'network_utils.dart';
 
 //Modeled off of Dr Ferrer's socket text chat example

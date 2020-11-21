@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import './friends.dart';
+import './friends_tab.dart';
 import './feed.dart';
 
 void main() {

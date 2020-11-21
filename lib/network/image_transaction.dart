@@ -18,6 +18,7 @@ class ImageTransaction {
       });
       var bytes = socket.read();
       if (bytes != null) buffer.addAll(bytes);
+      socket.close();
 
       return Image.memory(Uint8List.fromList(buffer));
     } on SocketException catch (e) {

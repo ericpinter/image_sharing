@@ -3,10 +3,8 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:image_sharing/network.dart';
-
-import './network.dart';
-import 'friends_model.dart';
+import 'package:image_sharing/network/network.dart';
+import 'package:image_sharing/network/friends_model.dart';
 
 class SendTab extends StatefulWidget {
   NetworkLog log;

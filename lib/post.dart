@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
-class Post {
-  Image _image;
+import 'package:image_sharing/network/friends_model.dart';
 
-  get image => _image;
+class Post {
+  final Image image;
+  final Friend sender;
+
+  Post(this.image, this.sender);
 }

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_sharing/send.dart';
 import './post.dart';
-import './network.dart';
+import 'package:image_sharing/network/network.dart';
 
 class FeedTab extends StatefulWidget {
   @override

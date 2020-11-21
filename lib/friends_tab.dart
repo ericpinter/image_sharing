@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'send.dart';
-import 'friends_model.dart';
+import 'network/friends_model.dart';
 
 class FriendsTab extends StatefulWidget {
   @override
