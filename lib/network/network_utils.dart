@@ -1,5 +1,12 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
 
+import 'dart:ui' as UI;
+import 'package:flutter/painting.dart';
+import 'package:flutter/widgets.dart' as Widget;
+import 'package:image_picker/image_picker.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'friends_model.dart';
 
@@ -38,4 +45,8 @@ class SocketOutcome {
   String toString() {
     return "successful $sent. error [$errorMessage]";
   }
+}
+
+Widget.Image PickedFileToWidget(PickedFile img) {
+  return Widget.Image.file(File(img.path));
 }

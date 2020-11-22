@@ -7,4 +7,8 @@ class Post {
   final Friend sender;
 
   Post(this.image, this.sender);
+
+  String toString(){
+    return image.toString() +" "+ sender.toString();
+  }
 }

@@ -1,13 +1,13 @@
-import 'dart:io';
-import 'package:flutter/scheduler.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_sharing/network/network.dart';
 import 'package:image_sharing/network/friends_model.dart';
+import 'package:image_sharing/network/network_utils.dart';
 
 class SendTab extends StatefulWidget {
   NetworkLog log;
+
   SendTab(this.log);
 
   @override
@@ -79,42 +79,40 @@ class _SendTabState extends State<SendTab> {
         ),
         body: Center(
             child: ListView(children: [
-                Hero(
-                tag: "post",
-                child: ElevatedButton(
-                    onPressed: () => _showPicker(context),
-                    child: Text("Change Image"))),
-            _image == null ? Text('No image selected.') : Image.file(File(_image.path)),
-            Form(
-                key: _formKey,
-                child: TextFormField(
-                  keyboardType: TextInputType.number,
-                  validator: ipValidate,
-                  onSaved: (text) {
-                    friend_selection = text;
-                  },
-                )),
-            ElevatedButton(
-                onPressed: () async {
-                  if (_formKey.currentState.validate()) {
-                    print(_image.path);
-                    _formKey.currentState.save();
-                    await log.sendImage(Friend(friend_selection), _image);
-                    Navigator.pop(context);
-                  }
+          Hero(
+              tag: "post",
+              child: ElevatedButton(
+                  onPressed: () => _showPicker(context),
+                  child: Text("Change Image"))),
+          _image == null
+              ? Text('No image selected.')
+              : PickedFileToWidget(_image),
+          Form(
+              key: _formKey,
+              child: TextFormField(
+                keyboardType: TextInputType.number,
+                validator: ipValidate,
+                onSaved: (text) {
+                  friend_selection = text;
                 },
-    child: Text("Submit"))]
-
-    )
-    )
-    );
+              )),
+          ElevatedButton(
+              onPressed: () async {
+                if (_formKey.currentState.validate()) {
+                  print(_image.path);
+                  _formKey.currentState.save();
+                  log.sendImage(Friend(friend_selection), _image);
+                  Navigator.pop(context);
+                }
+              },
+              child: Text("Submit"))
+        ])));
   }
 
   String ipValidate(String value) {
     if (value.isEmpty) {
       return 'Please enter an IP address';
-    }
-    else {
+    } else {
       List<String> splitList = value.split('.');
       if (splitList.length != 4) return "Invalid IP Address";
       for (String substring in splitList) {

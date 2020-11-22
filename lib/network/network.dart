@@ -1,21 +1,21 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/widgets.dart' as Widget;
 import 'package:image_picker/image_picker.dart';
-import 'image_transaction.dart';
+import 'package:image_sharing/network/image_transaction.dart';
+import '../post.dart';
 import 'friends_model.dart';
 import 'network_utils.dart';
 
 //Modeled off of Dr Ferrer's socket text chat example
 //https://github.com/gjf2a/text_messenger/blob/master/lib/data.dart
-
 class NetworkLog {
   Friends friends = new Friends();
   bool persist;
   var _message_callback;
-  List<Image> _feed = [];
+  List<Post> _feed = [];
 
-  List<Image> get feed => _feed;
+  get feed => _feed;
 
   NetworkLog(this._message_callback, {this.persist = true});
 
@@ -33,6 +33,7 @@ class NetworkLog {
           await ServerSocket.bind(InternetAddress.anyIPv4, port, shared: true);
       server.listen(_listenAsNegotiator);
     } on SocketException catch (e) {
+      print("problem in negotiation");
       print(e.toString());
     }
   }
@@ -60,15 +61,24 @@ class NetworkLog {
       var s = String.fromCharCodes(data);
       TransferRequest request = TransferRequest.fromJson(jsonDecode(s));
       friends.add(request.sender);
-      feed.add(await ImageTransaction.getImage(request.port));
-      _message_callback();
-      _updateDatabase();
+      print("setting up other port");
+      var img = await ImageTransaction.getImage(
+          socket.remoteAddress.address, request.port);
+      if (img != null) {
+        feed.add(Post(img, request.sender));
+        print("finishing image reception");
+        _message_callback();
+        _updateDatabase();
+      } else {
+        print("Problem in getting image");
+      }
     });
   }
 
   //TODO refactor this as taking a set of friends instead of a single IP
   Future<void> sendImage(Friend f, PickedFile img) async {
-    _feed.add(Image.memory(await img.readAsBytes()));
+    var widget = PickedFileToWidget(img);
+    feed.add(Post(widget, Friend("127.0.0.1", name: "self")));
     await friends.add(f);
     await friends.sendImage(f.ip, img);
   }

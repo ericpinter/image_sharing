@@ -3,8 +3,8 @@ import 'dart:io';
 import 'dart:math';
 import 'package:image_picker/image_picker.dart';
 import 'package:json_annotation/json_annotation.dart';
-
 import 'network_utils.dart';
+
 part 'friends_model.g.dart';
 
 class Friends extends Iterable<Friend> {
@@ -21,15 +21,13 @@ class Friends extends Iterable<Friend> {
 
   Friends._internal(this._ips2Friends);
 
-
-  void add(Friend f){
+  void add(Friend f) {
     if (_ips2Friends[f.ip] == null) {
       _ips2Friends[f.ip] = f;
     }
     //maybe TODO check if other is online
     _ips2Friends[f.ip].online = true;
   }
-
 
   Future<SocketOutcome> sendImage(String ip, PickedFile message) async {
     Friend friend = _ips2Friends[ip];
@@ -40,11 +38,17 @@ class Friends extends Iterable<Friend> {
       //we will request a random port between 1024 and 10000. I want to put this code somewhere else but it isn't worth abstracting for it
       var desiredPort = r.nextInt(10000 - 1024) + 1024;
       print("sending open request");
-      negotiationSocket.write(TransferRequest(sender: Friend(negotiationSocket.address.address),port:desiredPort));
+      print("sending to $ip on $desiredPort");
+      negotiationSocket.write(TransferRequest(
+          sender: Friend(negotiationSocket.address.address),
+          port: desiredPort));
 
       Socket imageSocket = await Socket.connect(ip, desiredPort);
       print("sending image stuff");
-      imageSocket.add(await message.readAsBytes());
+
+      var bytes = await message.readAsBytes();
+      imageSocket.add(bytes);
+
       await imageSocket.flush();
       imageSocket.destroy();
       negotiationSocket.destroy();
@@ -61,13 +65,13 @@ class Friends extends Iterable<Friend> {
   Iterator<Friend> get iterator => _ips2Friends.values.iterator;
 }
 
-@JsonSerializable(nullable:false)
+@JsonSerializable(nullable: false)
 class Friend {
   final String name;
   final String ip;
   bool online;
 
-  Friend(this.ip, {this.name="unknown",  this.online=false});
+  Friend(this.ip, {this.name = "unknown", this.online = false});
 
   String toString() {
     return jsonEncode(this);
@@ -78,8 +82,8 @@ class Friend {
   }
 
   factory Friend.fromJson(Map<String, dynamic> json) => _$FriendFromJson(json);
-  Map<String, dynamic> toJson() => _$FriendToJson(this);
 
+  Map<String, dynamic> toJson() => _$FriendToJson(this);
 }
 
 //Example friends list:

@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_sharing/send.dart';
-import './post.dart';
 import 'package:image_sharing/network/network.dart';
 
 class FeedTab extends StatefulWidget {
@@ -10,11 +9,10 @@ class FeedTab extends StatefulWidget {
 }
 
 class _FeedTabState extends State<FeedTab> {
-  List<Post> posts = [];
   Future<NetworkLog> logFuture;
 
   void reload() {
-    setState(() {});
+    if (mounted) setState(() {});
   }
 
   void initState() {
@@ -38,6 +36,10 @@ class _FeedTabState extends State<FeedTab> {
 
   Widget loadFromLog(NetworkLog log) {
     print(log.feed.length);
+    print(log.feed);
+    //return ValueListenableBuilder(
+    //  valueListenable: log.feed,
+    //  builder: (context, value, child) {
     return ListView(
       padding: const EdgeInsets.all(8),
       children: [
@@ -51,9 +53,11 @@ class _FeedTabState extends State<FeedTab> {
                 },
                 child: Text("Make a post"))),
         Text(log.feed.length.toString()),
-        for (final post in log.feed) post,
+        for (final post in log.feed) post.image,
         //TODO replace with a more formatted post when/if we add extra data
       ],
     );
+    // },
+    //);
   }
 }
