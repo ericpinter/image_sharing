@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'network_utils.dart';
@@ -28,6 +30,8 @@ class Friends extends Iterable<Friend> {
     //maybe TODO check if other is online
     _ips2Friends[f.ip].online = true;
   }
+
+  get length => _ips2Friends.length;
 
   Future<SocketOutcome> sendImage(String ip, PickedFile message) async {
     Friend friend = _ips2Friends[ip];
@@ -78,7 +82,7 @@ class Friend {
   }
 
   String describe() {
-    return "$name online<$online>";
+    return "$ip <${online ? "online" : "offline"}>";
   }
 
   factory Friend.fromJson(Map<String, dynamic> json) => _$FriendFromJson(json);
@@ -86,6 +90,48 @@ class Friend {
   Map<String, dynamic> toJson() => _$FriendToJson(this);
 }
 
-//Example friends list:
+class FriendsSelection {
+  Friends _friends;
+  List<bool> _isSelected;
+  var reload;
 
-List<Friend> friends = [Friend("199.59.102.246", name: "Vi")];
+  get friends => _friends;
+
+  Set<Friend> selected() {
+    List<Friend> _friendsList = _friends._ips2Friends.values.toList();
+    return {
+      for (int i = 0; i < _friendsList.length; i++)
+        if (_isSelected[i]) _friendsList[i]
+    };
+  }
+
+  FriendsSelection(this._friends, this.reload) {
+    _isSelected = [for (int i = 0; i < _friends.length; i++) false];
+  }
+
+  add(Friend f) {
+    var old_length = friends.length;
+    _friends.add(f);
+    if (friends.length > old_length) _isSelected.add(false);
+    reload();
+  }
+
+  List<Widget> asWidgetList() {
+    List<Friend> _friendsList = _friends._ips2Friends.values.toList();
+    print(_friendsList);
+    print(_isSelected);
+
+    return [
+      for (int i = 0; i < _friends.length; i++)
+        CheckboxListTile(
+            title: Text(_friendsList[i].name),
+            subtitle: Text(_friendsList[i].describe()),
+            secondary: Icon(Icons.person),
+            value: _isSelected[i],
+            onChanged: (bool newValue) {
+              _isSelected[i] = newValue;
+              reload();
+            })
+    ];
+  }
+}

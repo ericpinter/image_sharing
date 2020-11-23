@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'send.dart';
 import 'network/friends_model.dart';
 
 class FriendsTab extends StatefulWidget {
@@ -11,12 +10,13 @@ class FriendsTab extends StatefulWidget {
 class _FriendsTabState extends State<FriendsTab> {
   TextEditingController ipController;
   TextEditingController nameController;
-  Friends friends = Friends();
+  FriendsSelection selection;
 
   void initState() {
     super.initState();
     ipController = TextEditingController();
     nameController = TextEditingController();
+    selection = FriendsSelection(Friends(), this.reload);
   }
 
   void dispose() {
@@ -31,26 +31,12 @@ class _FriendsTabState extends State<FriendsTab> {
   @override
   Widget build(BuildContext context) {
     return ListView(
-        padding: const EdgeInsets.all(8), children: _renderFriends());
+        padding: const EdgeInsets.all(8), children: _renderFriendsAndButton());
   }
 
-  //Widget submitButton = FlatButton(child: Text("Add"), onPressed: () {});
-
-  //Widget cancelButton = FlatButton(child: Text("Cancel"), onPressed: () {});
-
-  List<Widget> _renderFriends() {
-    List<Widget> friendBlocks = new List<Widget>();
-    friendBlocks.add(
-        RaisedButton(onPressed: _addFriendPrompt, child: Text("Add Friend")));
-    for (Friend f in friends) {
-      Container friendBlock = new Container(
-        height: 50,
-        child: Center(child: Text(f.name)),
-      );
-
-      friendBlocks.add(friendBlock);
-    }
-    return friendBlocks;
+  List<Widget> _renderFriendsAndButton() {
+    return [RaisedButton(onPressed: _addFriendPrompt, child: Text("Add Friend")),
+      for (Widget friend_widget in selection.asWidgetList()) friend_widget,];
   }
 
   _addFriendPrompt() async {
@@ -108,7 +94,10 @@ class _FriendsTabState extends State<FriendsTab> {
   }
 
   void _addFriend(String ipAddr, String name) {
-    friends.add(new Friend(ipAddr, name: name));
+    selection.add(new Friend(ipAddr, name: name));
+  }
+  void reload() {
+    setState(() {});
   }
 
   String _ipValidate(String value) {
