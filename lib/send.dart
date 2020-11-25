@@ -99,7 +99,7 @@ class _SendTabState extends State<SendTab> {
               ElevatedButton(
                   onPressed: () async {
                     var selected = selection.selected();
-                    if (selected.isNotEmpty) {
+                    if (selected.isNotEmpty && _image != null) {
                       print(_image.path);
                       log.sendImage(selected, _image);
                       Navigator.pop(context);
