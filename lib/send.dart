@@ -103,11 +103,27 @@ class _SendTabState extends State<SendTab> {
                       print(_image.path);
                       log.sendImage(selected, _image);
                       Navigator.pop(context);
-                    } else {
-                      //TODO tell user to select somebody
-                    }
+                    } else return noSelectionAlert(context);
                   },
                   child: Text("Submit"))
             ])));
+  }
+
+  Widget noSelectionAlert(BuildContext context) {
+    Widget button = FlatButton(
+      child: Text("OK"),
+      onPressed: () => Navigator.of(context).pop(),
+    );
+
+    showDialog (
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("No Friends Selected"),
+          content: Text("Please select a friend to send to"),
+          actions: [button],
+        );
+      },
+    );
   }
 }
