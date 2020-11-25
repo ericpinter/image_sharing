@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/widgets.dart' as Widget;
 import 'package:image_picker/image_picker.dart';
 import 'package:image_sharing/network/image_transaction.dart';
 import '../post.dart';
@@ -76,10 +75,12 @@ class NetworkLog {
   }
 
   //TODO refactor this as taking a set of friends instead of a single IP
-  Future<void> sendImage(Friend f, PickedFile img) async {
+  Future<void> sendImage(Set<Friend> fset, PickedFile img) async {
     var widget = PickedFileToWidget(img);
     feed.add(Post(widget, Friend("127.0.0.1", name: "self")));
-    await friends.add(f);
-    await friends.sendImage(f.ip, img);
+    for (Friend f in fset) {
+      friends.add(f);
+      friends.sendImage(f.ip, img);
+    }
   }
 }

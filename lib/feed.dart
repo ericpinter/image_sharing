@@ -47,6 +47,7 @@ class _FeedTabState extends State<FeedTab> {
             tag: "post",
             child: ElevatedButton(
                 onPressed: () async {
+                  //TODO redirect only if they have any friends to send to, else tell them to add some friends
                   await Navigator.push(context,
                       MaterialPageRoute(builder: (context) => SendTab(log)));
                   reload();
