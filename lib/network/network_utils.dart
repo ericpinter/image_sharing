@@ -1,10 +1,6 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
-import 'dart:ui' as UI;
-import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart' as Widget;
 import 'package:image_picker/image_picker.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -49,4 +45,23 @@ class SocketOutcome {
 
 Widget.Image PickedFileToWidget(PickedFile img) {
   return Widget.Image.file(File(img.path));
+}
+
+String ipValidate(String value) {
+  if (value.isEmpty) {
+    return 'Please enter an IP address';
+  } else {
+    List<String> splitList = value.split('.');
+    if (splitList.length != 4) return "Invalid IP Address";
+    for (String substring in splitList) {
+      if (!isNumeric(substring)) return "Invalid IP Address";
+      int num = int.parse(substring);
+      if (num < 0 || num > 255) return "Invalid IP Address";
+    }
+  }
+  return null;
+}
+
+bool isNumeric(String str) {
+  return double.tryParse(str) != null;
 }

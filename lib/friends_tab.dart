@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_sharing/network/friends_selection.dart';
 import 'network/friends_model.dart';
 
 class FriendsTab extends StatefulWidget {
@@ -35,8 +36,10 @@ class _FriendsTabState extends State<FriendsTab> {
   }
 
   List<Widget> _renderFriendsAndButton() {
-    return [RaisedButton(onPressed: _addFriendPrompt, child: Text("Add Friend")),
-      for (Widget friend_widget in selection.asWidgetList()) friend_widget,];
+    return [
+      RaisedButton(onPressed: _addFriendPrompt, child: Text("Add Friend")),
+      for (Widget friend_widget in selection.asWidgetList()) friend_widget,
+    ];
   }
 
   _addFriendPrompt() async {
@@ -96,6 +99,7 @@ class _FriendsTabState extends State<FriendsTab> {
   void _addFriend(String ipAddr, String name) {
     selection.add(new Friend(ipAddr, name: name));
   }
+
   void reload() {
     setState(() {});
   }

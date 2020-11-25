@@ -6,32 +6,33 @@ import 'package:flutter/widgets.dart';
 class ImageTransaction {
   static Future<Image> getImage(ip, port) async {
     try {
-      var server = await RawServerSocket.bind(InternetAddress.anyIPv4, port,
-          shared: true);
-      var socket = await server.take(1).first;
-      server.close();
-      var i = 0;
-
-      List<int> buffer = await socket
+      RawSocket socket = await _getSocket(InternetAddress.anyIPv4, port);
+      List<int> buffer = [];
+      await socket
           .takeWhile((event) => event != RawSocketEvent.readClosed)
-          .fold([], (List<int> buffer, RawSocketEvent e) {
-        if (e == RawSocketEvent.read) {
-          print("read $i");
-          i++;
-          var bytes = socket.read();
-          if (bytes != null) buffer.addAll(bytes);
-        }
-        return buffer;
+          .forEach((event) {
+        if (event == RawSocketEvent.read) _readToBuffer(buffer, socket);
       });
-      print("read $i");
-      var end_bytes = socket.read();
-      if (end_bytes != null) buffer.addAll(end_bytes);
+      _readToBuffer(buffer, socket);
       socket.close();
 
+      print("got image data $buffer");
       return Image.memory(Uint8List.fromList(buffer));
     } on SocketException catch (e) {
       print("problem getting image");
       print(e.toString());
     }
   }
+}
+
+Future<RawSocket> _getSocket(ip, port) async {
+  var server = await RawServerSocket.bind(ip, port, shared: true);
+  var socket = await server.take(1).first;
+  server.close();
+  return socket;
+}
+
+_readToBuffer(List<int> buffer, socket) {
+  var bytes = socket.read();
+  if (bytes != null) buffer.addAll(bytes);
 }
