@@ -3,6 +3,7 @@ import 'package:image_sharing/network/friends_model.dart';
 
 class FriendsSelection {
   Friends _friends;
+  List<List<Friend>> groups;
   List<bool> _isSelected;
   var reload;
 
@@ -17,6 +18,7 @@ class FriendsSelection {
   }
 
   FriendsSelection(this._friends, this.reload) {
+    groups = [];
     _isSelected = [for (int i = 0; i < _friends.length; i++) false];
   }
 
@@ -25,6 +27,10 @@ class FriendsSelection {
     _friends.add(f);
     if (friends.length > old_length) _isSelected.add(false);
     reload();
+  }
+
+  newGroup(List<Friend> flist) {
+    groups.add(flist);
   }
 
   List<Widget> asWidgetList() {
@@ -44,5 +50,23 @@ class FriendsSelection {
               reload();
             })
     ];
+  }
+
+  List<Widget> groupWidgetList() {
+    return [
+      for (int i = 0; i < groups.length; i++)
+      ListTile(
+        title: Text("Group "+ i.toString()),
+        subtitle: Text(_groupToString(i)),
+        leading: Icon(Icons.people),
+      )
+    ];
+  }
+
+  String _groupToString(int index) {
+    String s = "";
+    for (Friend f in groups[index]) s+= f.name + ", ";
+    s = s.substring(0, s.length - 2);
+    return s;
   }
 }

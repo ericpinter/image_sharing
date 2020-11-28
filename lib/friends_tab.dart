@@ -38,6 +38,9 @@ class _FriendsTabState extends State<FriendsTab> {
   List<Widget> _renderFriendsAndButton() {
     return [
       RaisedButton(onPressed: _addFriendPrompt, child: Text("Add Friend")),
+      RaisedButton(onPressed: _createGroup, child: Text("Create a Group")),
+      for(Widget group_widget in selection.groupWidgetList()) group_widget,
+      Divider(),
       for (Widget friend_widget in selection.asWidgetList()) friend_widget,
     ];
   }
@@ -76,6 +79,34 @@ class _FriendsTabState extends State<FriendsTab> {
             new FlatButton(
                 child: Text("Cancel"), onPressed: () => Navigator.pop(context)),
           ]),
+    );
+  }
+
+  _createGroup() {
+    Set<Friend> selected = selection.selected();
+    if (selected.length  < 2) _noSelectionAlert();
+    else {
+      setState(() {
+        selection.newGroup(selected.toList());
+      });
+    }
+  }
+
+  Widget _noSelectionAlert() {
+    Widget button = FlatButton(
+      child: Text("OK"),
+      onPressed: () => Navigator.of(context).pop(),
+    );
+
+    showDialog (
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Not Enough Friends Selected"),
+          content: Text("Please select 2+ friends to add to a group."),
+          actions: [button],
+        );
+      },
     );
   }
 
