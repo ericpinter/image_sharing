@@ -62,10 +62,31 @@ class FriendsSelection {
     ];
   }
 
+  List<Widget> groupButtonList(BuildContext context) {
+    return [
+      for (int i = 0; i < _friends.groups.length; i++)
+        ListTile(
+          title: Text("Send to Group "+ i.toString()),
+          subtitle: Text(_groupToString(i)),
+          leading: Icon(Icons.people),
+          tileColor: Theme.of(context).accentColor,
+        )
+    ];
+  }
+
   String _groupToString(int index) {
     String s = "";
     for (Friend f in _friends.groups[index]) s+= f.name + ", ";
     s = s.substring(0, s.length - 2);
     return s;
+  }
+
+  void setGroupSelected(int groupIndex) {
+    List<Friend> _friendsList = _friends.asList;
+    _isSelected = [for (int i = 0; i < _friendsList.length; i++) false];
+    for (Friend f in _friends.groups[groupIndex]) {
+      int selectedIndex = _friends.groups[groupIndex].indexOf(f);
+      _isSelected[selectedIndex] = true;
+    }
   }
 }

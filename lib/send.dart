@@ -90,10 +90,12 @@ class _SendTabState extends State<SendTab> {
                   tag: "post",
                   child: ElevatedButton(
                       onPressed: () => _showPicker(context),
-                      child: Text("Change Image"))),
+                      child: Text("Change Image"))
+              ),
               _image == null
                   ? Text('No image selected.')
                   : PickedFileToWidget(_image),
+              for(Widget w in generateGroupButtons()) w,
               for (Widget friend_widget in selection
                   .asWidgetList()) friend_widget,
               ElevatedButton(
@@ -124,6 +126,32 @@ class _SendTabState extends State<SendTab> {
           actions: [button],
         );
       },
+    );
+  }
+
+  List<Widget> generateGroupButtons() {
+    List<Widget> buttonList = selection.groupButtonList(context);
+    List<Widget> groupButtons = [
+      for (int i = 0; i < buttonList.length; i++) groupButton(buttonList[i], i)
+    ];
+    return groupButtons;
+  }
+
+  Widget groupButton(Widget groupTile, int index) {
+    return Container(
+      margin: EdgeInsets.all(10.0),
+      child: GestureDetector(
+        child: groupTile,
+        onTap: () {
+          if (_image != null) {
+            selection.setGroupSelected(index);
+            var selected = selection.selected();
+            print(_image.path);
+            log.sendImage(selected, _image);
+            Navigator.pop(context);
+          } else return noSelectionAlert(context);
+        }
+      )
     );
   }
 }
