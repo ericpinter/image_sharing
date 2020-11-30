@@ -1,60 +1,68 @@
 import 'dart:async';
-import 'package:flutter/widgets.dart';
+import 'dart:collection';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import '../network/friends_model.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  final Future<Database> friendsDb = openDatabase(
-    join(await getDatabasesPath(), 'friends_database.db'),
-    onCreate: (db, version) {
-      //sql command inside db.execute
-      return db.execute(
-          "CREATE TABLE friends(ip TEXT PRIMARY KEY, name TEXT, online INTEGER)");
-    },
-    version: 1,
-  );
+class FriendDatabase {
+  static Database friendsDb;
 
-  Future<void> insertFriend(Friend friend) async {
-    final Database db = await friendsDb;
+  static init() async {
+    if (friendsDb == null) {
+      friendsDb = await getDatabasesPath().then((dbPath) => openDatabase(
+            join(dbPath, 'friends_database.db'),
+            onCreate: (db, version) {
+              //sql command inside db.execute
+              return db.execute(
+                  "CREATE TABLE friends(ip TEXT PRIMARY KEY, name TEXT, online INTEGER)");
+            },
+            version: 1,
+          ));
+    }
+    return friendsDb;
+  }
 
-    await db.insert(
+  static Future<void> insertFriend(Friend friend) async {
+    await friendsDb.insert(
       'friends',
       friend.toJson(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
-  Future<List<Friend>> friends() async {
-    final Database db = await friendsDb;
-
-    final List<Map<String, dynamic>> maps = await db.query('friends');
+  static Future<List<Friend>> friends() async {
+    final List<Map<String, dynamic>> maps = await friendsDb.query('friends');
 
     //ip not inside {} of friend model constructor
     return List.generate(maps.length, (i) {
       return Friend(
+        maps[i]['ip'],
         name: maps[i]['name'],
-        online: maps[i]['online'],
-        ip: maps[i]['ip'],
+        online: maps[i]['online'] == 1 ? true : false,
       );
     });
   }
 
-  Future<void> deleteFriend(int ip) async {
-    final db = await friendsDb;
+  static Future<LinkedHashMap<String, Friend>> toFriendMap() async {
+    var friendList = await friends();
+    var ipMap = LinkedHashMap<String, Friend>();
+    for (Friend f in friendList) {
+      ipMap.putIfAbsent(f.ip, () => f);
+    }
 
-    await db.delete(
+    return ipMap;
+  }
+
+  static Future<void> deleteFriend(int ip) async {
+    await friendsDb.delete(
       'friends',
       where: "ip = ?",
       whereArgs: [ip],
     );
   }
 
-  Future<void> updateFriend(Friend friend) async {
-    final db = await friendsDb;
-
-    await db.update(
+  static Future<void> updateFriend(Friend friend) async {
+    await friendsDb.update(
       'friends',
       friend.toJson(),
       where: "ip = ?",

@@ -74,7 +74,7 @@ class NetworkLog {
     });
   }
 
-  //TODO refactor this as taking a set of friends instead of a single IP
+  //TODO refactor this to work with groups as well
   Future<void> sendImage(Set<Friend> fset, PickedFile img) async {
     var widget = PickedFileToWidget(img);
     feed.add(Post(widget, Friend("127.0.0.1", name: "self")));

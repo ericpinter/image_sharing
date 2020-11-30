@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:image_picker/image_picker.dart';
+import 'package:image_sharing/database/friends_database.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'network_utils.dart';
 
@@ -13,11 +14,11 @@ class Friends extends Iterable<Friend> {
   List<List<Friend>> groups = [];
   static Friends _state;
 
-  factory Friends({LinkedHashMap<String, Friend> ipMap}) {
-    if (_state == null) {
-      _state = Friends._internal(ipMap ?? LinkedHashMap());
-    }
+  static init() async {
+    _state = Friends._internal((await FriendDatabase.toFriendMap()) ?? LinkedHashMap());
+  }
 
+  factory Friends() {
     return _state;
   }
 
@@ -26,6 +27,7 @@ class Friends extends Iterable<Friend> {
   void add(Friend f) {
     if (_ips2Friends[f.ip] == null) {
       _ips2Friends[f.ip] = f;
+      FriendDatabase.insertFriend(f);
     }
     //maybe TODO check if other is online
     _ips2Friends[f.ip].online = true;

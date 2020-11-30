@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import './friends_tab.dart';
 import './feed.dart';
+import 'database/friends_database.dart';
+import 'network/friends_model.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await FriendDatabase.init();
+  await Friends.init();
+  //TODO await Feed.init()
+
   runApp(MyApp());
 }
 
