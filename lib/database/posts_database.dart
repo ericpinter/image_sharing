@@ -1,5 +1,7 @@
 import 'dart:async';
-import 'dart:collection';
+import 'package:flutter/widgets.dart' as Widgets;
+import 'package:image_sharing/database/friends_database.dart';
+import 'package:image_sharing/database/image_utils.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:image_sharing/post.dart';
@@ -14,7 +16,7 @@ class PostDatabase {
             onCreate: (db, version) {
               //convert image to BASE64 and store into sql database as a string
               return db.execute(
-                  "CREATE TABLE posts(image TEXT PRIMARY KEY, sender TEXT FOREIGN KEY)");
+                  "CREATE TABLE posts(image BLOB PRIMARY KEY, sender TEXT REFERENCES friends (ip))");
             },
             version: 1,
           ));
@@ -25,20 +27,22 @@ class PostDatabase {
   static Future<void> insertPost(Post post) async {
     await postsDb.insert(
       'posts',
-      post.toMap(),
+      await post.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
-  static Future<List<Post>> friends() async {
+  static Future<List<Post>> posts() async {
     final List<Map<String, dynamic>> maps = await postsDb.query('posts');
-
-    return List.generate(maps.length, (i) {
-      return Post(maps[i]['image'], maps[i]['sender']);
-    });
+    print("attempting");
+    return [
+      for (int i = 0; i < maps.length; i++)
+        Post(await bytesToUI(maps[i]['image']),
+            await FriendDatabase.getFriend(maps[i]['sender']))
+    ];
   }
-
-  static Future<void> deleteFriend(int image) async {
+  /*
+  static Future<void> deletePost(int image) async {
     await postsDb.delete(
       'posts',
       where: "image = ?",
@@ -46,12 +50,12 @@ class PostDatabase {
     );
   }
 
-  static Future<void> updateFriend(Post post) async {
+  static Future<void> updatePost(Post post) async {
     await postsDb.update(
       'posts',
-      post.toMap(),
+      await post.toMap(),
       where: "image = ?",
       whereArgs: [post.image],
     );
-  }
+  }*/
 }

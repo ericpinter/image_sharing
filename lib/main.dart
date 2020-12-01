@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_sharing/database/posts_database.dart';
 import './friends_tab.dart';
 import './feed.dart';
 import 'database/friends_database.dart';
@@ -8,7 +9,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FriendDatabase.init();
   await Friends.init();
-  //TODO await Feed.init()
+  await PostDatabase.init();
 
   runApp(MyApp());
 }

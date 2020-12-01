@@ -12,10 +12,13 @@ part 'friends_model.g.dart';
 class Friends extends Iterable<Friend> {
   final LinkedHashMap<String, Friend> _ips2Friends;
   Map<String, List<Friend>> groups = {};
+  bool persist;
   static Friends _state;
 
-  static init() async {
-    _state = Friends._internal((await FriendDatabase.toFriendMap()) ?? LinkedHashMap());
+  static init({bool persist = true}) async {
+    var db = persist ? await FriendDatabase.toFriendMap() : null;
+    _state = Friends._internal(db ?? LinkedHashMap());
+    _state.persist = persist;
   }
 
   factory Friends() {

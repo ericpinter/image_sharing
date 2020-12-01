@@ -61,6 +61,22 @@ class FriendDatabase {
     );
   }
 
+  static Future<Friend> getFriend(int ip) async {
+    var map = await friendsDb.query(
+      'friends',
+      where: "ip = ?",
+      whereArgs: [ip],
+    );
+
+    return Friend(
+      map[0]['ip'],
+      name: map[0]['name'],
+      online: map[0]['online'] == 1 ? true : false,
+    );
+
+  }
+
+
   static Future<void> updateFriend(Friend friend) async {
     await friendsDb.update(
       'friends',

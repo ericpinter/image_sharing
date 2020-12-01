@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_sharing/database/image_utils.dart';
 import 'package:image_sharing/send.dart';
 import 'package:image_sharing/network/network.dart';
 
@@ -54,7 +55,7 @@ class _FeedTabState extends State<FeedTab> {
                 },
                 child: Text("Make a post"))),
         Text(log.feed.length.toString()),
-        for (final post in log.feed) post.image,
+        for (final post in log.feed) RawImage(image:post.image)//await UIImageToWidget(post.image),
         //TODO replace with a more formatted post when/if we add extra data
       ],
     );
