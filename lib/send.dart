@@ -131,20 +131,21 @@ class _SendTabState extends State<SendTab> {
 
   List<Widget> generateGroupButtons() {
     List<Widget> buttonList = selection.groupButtonList(context);
+    List<String> groupNameList = selection.groupsAsList();
     List<Widget> groupButtons = [
-      for (int i = 0; i < buttonList.length; i++) groupButton(buttonList[i], i)
+      for (int i = 0; i < buttonList.length; i++) groupButton(buttonList[i], groupNameList[i])
     ];
     return groupButtons;
   }
 
-  Widget groupButton(Widget groupTile, int index) {
+  Widget groupButton(Widget groupTile, String groupName) {
     return Container(
       margin: EdgeInsets.all(10.0),
       child: GestureDetector(
         child: groupTile,
         onTap: () {
           if (_image != null) {
-            selection.setGroupSelected(index);
+            selection.setGroupSelected(groupName);
             var selected = selection.selected();
             print(_image.path);
             log.sendImage(selected, _image);

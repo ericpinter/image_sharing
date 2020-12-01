@@ -11,7 +11,7 @@ part 'friends_model.g.dart';
 
 class Friends extends Iterable<Friend> {
   final LinkedHashMap<String, Friend> _ips2Friends;
-  List<List<Friend>> groups = [];
+  Map<String, List<Friend>> groups = {};
   static Friends _state;
 
   static init() async {

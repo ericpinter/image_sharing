@@ -27,8 +27,8 @@ class FriendsSelection {
     reload();
   }
 
-  newGroup(List<Friend> flist) {
-    _friends.groups.add(flist);
+  newGroup(List<Friend> flist, String name) {
+    _friends.groups[name] = flist;
     reload();
   }
 
@@ -53,39 +53,45 @@ class FriendsSelection {
 
   List<Widget> groupWidgetList() {
     return [
-      for (int i = 0; i < _friends.groups.length; i++)
-      ListTile(
-        title: Text("Group "+ i.toString()),
-        subtitle: Text(_groupToString(i)),
-        leading: Icon(Icons.people),
-      )
+      for (String name in _friends.groups.keys)
+        ListTile(
+          title: Text("$name"),
+          subtitle: Text(_groupToString(name)),
+          leading: Icon(Icons.people),
+        ),
     ];
   }
 
   List<Widget> groupButtonList(BuildContext context) {
     return [
-      for (int i = 0; i < _friends.groups.length; i++)
+      for (String name in _friends.groups.keys)
         ListTile(
-          title: Text("Send to Group "+ i.toString()),
-          subtitle: Text(_groupToString(i)),
+          title: Text("Send to $name"),
+          subtitle: Text(_groupToString(name)),
           leading: Icon(Icons.people),
           tileColor: Theme.of(context).accentColor,
-        )
+        ),
     ];
   }
 
-  String _groupToString(int index) {
+  List<String> groupsAsList() {
+    return [
+      for (String name in _friends.groups.keys) name
+    ];
+  }
+
+  String _groupToString(String group_name) {
     String s = "";
-    for (Friend f in _friends.groups[index]) s+= f.name + ", ";
+    for (Friend f in _friends.groups[group_name]) s+= f.name + ", ";
     s = s.substring(0, s.length - 2);
     return s;
   }
 
-  void setGroupSelected(int groupIndex) {
+  void setGroupSelected(String name) {
     List<Friend> _friendsList = _friends.asList;
     _isSelected = [for (int i = 0; i < _friendsList.length; i++) false];
-    for (Friend f in _friends.groups[groupIndex]) {
-      int selectedIndex = _friends.groups[groupIndex].indexOf(f);
+    for (Friend f in _friends.groups[name]) {
+      int selectedIndex = _friends.asList.indexOf(f);
       _isSelected[selectedIndex] = true;
     }
   }

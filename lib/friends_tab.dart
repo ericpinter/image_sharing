@@ -72,6 +72,7 @@ class _FriendsTabState extends State<FriendsTab> {
                   if (_formKey.currentState.validate()) {
                     setState(() {
                       _addFriend(ipController.text, nameController.text);
+                      nameController.clear();
                     });
                     Navigator.pop(context);
                   }
@@ -82,13 +83,49 @@ class _FriendsTabState extends State<FriendsTab> {
     );
   }
 
+  _createGroupPrompt(Set<Friend> selected) async {
+    final _formKey = GlobalKey<FormState>();
+    await showDialog<String>(
+      context: context,
+      child: new AlertDialog(
+          contentPadding: const EdgeInsets.all(18.0),
+          content: new Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    _nameField(),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            new FlatButton(
+                child: Text("Add Group"),
+                onPressed: () async {
+                  if (!nameController.text.isEmpty) {
+                    setState(() {
+                      selection.newGroup(selected.toList(), nameController.text);
+                      nameController.clear();
+                    });
+                    Navigator.pop(context);
+                  }
+                }),
+            new FlatButton(
+                child: Text("Cancel"), onPressed: () => Navigator.pop(context)),
+          ]),
+    );
+  }
+
+
   _createGroup() {
     Set<Friend> selected = selection.selected();
     if (selected.length  < 2) _noSelectionAlert();
     else {
-      setState(() {
-        selection.newGroup(selected.toList());
-      });
+      _createGroupPrompt(selected);
     }
   }
 
