@@ -8,7 +8,15 @@ class Post {
 
   Post(this.image, this.sender);
 
-  String toString(){
-    return image.toString() +" "+ sender.toString();
+  String toString() {
+    return image.toString() + " " + sender.toString();
+  }
+
+  Map<String, dynamic> toMap() {
+    var map = <String, dynamic>{
+      'image': image,
+      'sender': sender,
+    };
+    return map;
   }
 }
