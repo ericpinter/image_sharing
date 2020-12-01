@@ -12,10 +12,13 @@ part 'friends_model.g.dart';
 class Friends extends Iterable<Friend> {
   final LinkedHashMap<String, Friend> _ips2Friends;
   List<List<Friend>> groups = [];
+  bool persist;
   static Friends _state;
 
-  static init() async {
-    _state = Friends._internal((await FriendDatabase.toFriendMap()) ?? LinkedHashMap());
+  static init({bool persist = true}) async {
+    var db = persist ? await FriendDatabase.toFriendMap() : null;
+    _state = Friends._internal(db ?? LinkedHashMap());
+    _state.persist = persist;
   }
 
   factory Friends() {
@@ -27,7 +30,7 @@ class Friends extends Iterable<Friend> {
   void add(Friend f) {
     if (_ips2Friends[f.ip] == null) {
       _ips2Friends[f.ip] = f;
-      FriendDatabase.insertFriend(f);
+      if (persist) FriendDatabase.insertFriend(f);
     }
     //maybe TODO check if other is online
     _ips2Friends[f.ip].online = true;

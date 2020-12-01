@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-
+import 'dart:ui';
+import 'package:image_sharing/database/image_utils.dart';
 import 'package:image_sharing/network/friends_model.dart';
 
 class Post {
@@ -12,10 +12,10 @@ class Post {
     return image.toString() + " " + sender.toString();
   }
 
-  Map<String, dynamic> toMap() {
+  Future<Map<String, dynamic>> toMap() async {
     var map = <String, dynamic>{
-      'image': image,
-      'sender': sender,
+      'image': await toBytes(image),
+      'sender': sender.ip,
     };
     return map;
   }
